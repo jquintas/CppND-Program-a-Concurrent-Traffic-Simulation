@@ -25,6 +25,8 @@ void Vehicle::setCurrentDestination(std::shared_ptr<Intersection> destination)
 void Vehicle::simulate()
 {
     // launch drive function in a thread
+    // Task L1.2 : In the Vehicle class, start a thread with the member function drive and the object this as the launch 
+    // parameters. Also, add the created thread into the _thread vector of the parent class.
     threads.emplace_back(std::thread(&Vehicle::drive, this));
 }
 
@@ -77,11 +79,14 @@ void Vehicle::drive()
             if (completion >= 0.9 && !hasEnteredIntersection)
             {
                 // request entry to the current intersection (using async)
+                // @.@ DONE: Task L2.1 -> start up task using std::async which takes a reference to the method Intersection::addVehicleToQueue
+                //                        , the object _currDestination and a shared pointer to this using the get_share_this() function.
+                //                          Then, wait for the data to be available before proceeding the slow down. 
                 auto ftrEntryGranted = std::async(&Intersection::addVehicleToQueue, _currDestination, get_shared_this());
-
                 // wait until entry has been granted
                 ftrEntryGranted.get();
 
+                
                 // slow down and set intersection flag
                 _speed /= 10.0;
                 hasEnteredIntersection = true;
